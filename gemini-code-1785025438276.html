@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The London Cafe Garden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Newsreader:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Kırmızı - Beyaz Konsepti Renk Tanımlamaları */
+  :root{
+    /* Gündüz (Açık) Modu Renkleri */
+    --bg-main: #F9F6F0;       /* Yumuşak Kremsi Beyaz */
+    --bg-card: #FFFFFF;       /* Saf Beyaz */
+    --text-main: #2A0808;     /* Çok Koyu Kırmızı / Siyaha Yakın */
+    --text-soft: #6B4F4F;     /* Yumuşak Kahve/Kırmızı */
+    --brand-red: #A82424;     /* Londra Kırmızısı */
+    --brand-red-deep: #701313;/* Derin Londra Kırmızısı */
+    --line: #E8DCC4;          /* İnce Çizgi Rengi */
+    --ink-reverse: #FFFFFF;   /* Kırmızı üzerinde beyaz yazı için */
+  }
+
+  /* Gece (Koyu) Modu Renkleri */
+  [data-theme="dark"] {
+    --bg-main: #1C0A0A;       /* Çok Koyu Kırmızı Siyah */
+    --bg-card: #2D1414;       /* Koyu Kırmızı Kart Arka Planı */
+    --text-main: #F6ECD3;     /* Krem Beyazı Yazı */
+    --text-soft: #BCA3A3;     /* Yumuşak Kırmızımsı Gri */
+    --brand-red: #D34545;     /* Parlak Londra Kırmızısı */
+    --brand-red-deep: #A82424;
+    --line: #4E2525;          /* Koyu Çizgi Rengi */
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--brand-red-deep);
+    color:var(--text-main);
+    font-family:'Newsreader', serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ---------- LANDING (AÇILIŞ) ---------- */
+  #landing{
+    position:fixed; inset:0;
+    z-index:10;
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity .5s ease, visibility .5s ease;
+  }
+  #landing.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+
+  #bgVideo{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    z-index:1;
+  }
+  .video-fallback{
+    position:absolute; inset:0;
+    z-index:0;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(168,36,36,0.25), transparent 55%),
+      radial-gradient(circle at 75% 80%, rgba(112,19,19,0.5), transparent 55%),
+      linear-gradient(160deg, #1C0A0A, #701313 60%, #1C0A0A);
+  }
+  .overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(28,10,10,0.6) 0%, rgba(28,10,10,0.4) 40%, rgba(28,10,10,0.8) 100%);
+    z-index:2;
+  }
+
+  .landing-content{
+    position:relative; z-index:3;
+    text-align:center;
+    padding:32px 24px;
+    width:100%;
+    max-width:420px;
+  }
+  .logo-wrap{
+    width:clamp(140px,42vw,190px);
+    margin:0 auto 26px;
+    filter:drop-shadow(0 10px 26px rgba(0,0,0,0.45));
+  }
+  .logo-wrap img{
+    width:100%; height:auto; display:block; border-radius:50%;
+    animation:spin 22s linear infinite;
+  }
+  @keyframes spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+  }
+  .landing-content .sub{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:14px;
+    color:#F6ECD3;
+    letter-spacing:0.4px;
+    margin:-8px 0 40px;
+  }
+
+  .menu-cta{
+    display:block;
+    width:100%;
+    background:var(--brand-red);
+    color:var(--ink-reverse);
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-style:italic;
+    font-size:19px;
+    padding:16px 20px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    margin-bottom:18px;
+    transition:transform .15s ease, background-color 0.2s;
+  }
+  .menu-cta:active{ transform:scale(0.98); }
+
+  .action-row{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+  }
+  .action-btn{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.25);
+    backdrop-filter:blur(4px);
+    color:#F6ECD3;
+    padding:12px 6px;
+    border-radius:12px;
+    text-decoration:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.3px;
+    cursor:pointer;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .action-btn:active{ transform:scale(0.96); }
+  .action-btn:hover{ background:rgba(255,255,255,0.2); }
+  .action-btn svg{ width:20px; height:20px; }
+
+  .wifi-pop{
+    position:absolute;
+    bottom:18px; left:50%; transform:translateX(-50%) translateY(8px);
+    z-index:3;
+    background:var(--brand-red-deep);
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:10px;
+    padding:12px 20px;
+    text-align:center;
+    opacity:0; visibility:hidden;
+    transition:opacity .2s ease, transform .2s ease, visibility .2s ease;
+    white-space:nowrap;
+  }
+  .wifi-pop.open{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
+  .wifi-pop .label{ font-family:'IBM Plex Mono', monospace; font-size:9px; color:#F6ECD3; opacity:0.7; letter-spacing:1px; text-transform:uppercase; }
+  .wifi-pop .value{ font-family:'Fraunces', serif; font-size:18px; color:#F6ECD3; margin-top:2px; }
+
+  /* ---------- MENU VIEW (MENÜ EKRANI) ---------- */
+  #menuView{
+    position:fixed; inset:0;
+    background:var(--bg-main);
+    z-index:5;
+    overflow-y:auto;
+    transform:translateY(100%);
+    transition:transform .45s cubic-bezier(.22,.9,.32,1);
+  }
+  #menuView.open{ transform:translateY(0); }
+
+  header.mheader{
+    position:sticky; top:0; z-index:20;
+    background:var(--brand-red-deep);
+    color:#F6ECD3;
+    box-shadow:0 6px 16px rgba(0,0,0,0.15);
+    padding:14px 16px;
+  }
+  .mtop{
+    display:flex; align-items:center; gap:10px;
+  }
+  .back-btn{
+    background:transparent; border:1px solid rgba(255,255,255,0.25);
+    color:#F6ECD3; border-radius:8px; padding:6px 10px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; cursor:pointer;
+  }
+  .mtop h2{
+    font-family:'Fraunces', serif; font-weight:600; font-size:18px; margin:0;
+    flex:1;
+  }
+
+  /* Gece / Gündüz Mod Değiştirme Butonu */
+  .theme-btn {
+    background: transparent; border: 1px solid rgba(255,255,255,0.25);
+    color: #F6ECD3; border-radius: 8px; padding: 6px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .theme-btn svg { width: 16px; height: 16px; }
+
+  main.mmain{
+    max-width:640px; margin:0 auto; padding:20px 16px 60px;
+  }
+
+  /* Kategori Seçim Ekranı Kartları (Kırmızı-Beyaz) */
+  .categories-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 14px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s;
+  }
+  .category-card:active { transform: scale(0.97); }
+  .category-card .cat-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--brand-red);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .category-card .cat-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: 16.5px;
+    color: var(--text-main);
+  }
+
+  .hidden-view { display: none !important; }
+
+  .divider{ display:flex; align-items:center; gap:10px; margin:10px 0 20px; color:var(--brand-red); }
+  .divider .rule{ flex:1; height:1px; background:linear-gradient(to right, transparent, var(--line) 15%, var(--line) 85%, transparent); }
+  .cat-title{ font-family:'Fraunces', serif; font-weight:600; font-style:italic; font-size:22px; color:var(--brand-red); margin:0; white-space:nowrap; }
+
+  /* Ürün Kartı Tasarımı */
+  .item{
+    display:flex; gap:12px;
+    background:var(--bg-card); border:1px solid var(--line); border-radius:12px;
+    padding:12px; margin-bottom:12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  .thumb{
+    flex:none; width:56px; height:56px; border-radius:8px;
+    background:linear-gradient(135deg, var(--brand-red), var(--brand-red-deep));
+    display:flex; align-items:center; justify-content:center;
+    color:#FFFFFF; font-family:'Fraunces', serif; font-weight:600; font-size:18px;
+  }
+  .item-body{ flex:1; min-width:0; }
+  .item-row{ display:flex; align-items:baseline; gap:8px; }
+  .item-name{ font-size:15.5px; font-weight:600; color:var(--text-main); }
+  .leader{ flex:1; border-bottom:1px dotted var(--text-soft); opacity:0.25; transform:translateY(-4px); }
+  .price{ font-family:'IBM Plex Mono', monospace; font-size:14px; color:var(--brand-red); font-weight:600; white-space:nowrap; }
+  .desc{ margin:4px 0 6px; font-size:13px; font-style:italic; color:var(--text-soft); line-height:1.4; }
+  .meta{ display:flex; gap:6px; flex-wrap:wrap; }
+  .kcal{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--text-soft); border:1px solid var(--line); border-radius:4px; padding:1px 6px; }
+  .allergen{ font-size:9.5px; color:var(--brand-red); border:1px solid var(--brand-red); border-radius:4px; padding:1px 6px; font-family:'IBM Plex Mono', monospace; }
+
+  @media (prefers-reduced-motion: reduce){
+    .logo-wrap img { animation:none; }
+    #menuView{ transition:none; }
+  }
+</style>
+</head>
+<body data-theme="light"> <div id="landing">
+  <video id="bgVideo" autoplay muted loop playsinline poster="poster.jpg">
+    <source src="85c4f4a65fe8406ab73a25cc07dfc823.mp4" type="video/mp4">
+  </video>
+  <div class="video-fallback"></div>
+  <div class="overlay"></div>
+
+  <div class="landing-content">
+    <div class="logo-wrap"><img src="logo.jpeg" alt="The London Cafe"></div>
+    <p class="sub">Alanya, Saray</p>
+
+    <button class="menu-cta" id="openMenu">Menüyü Görüntüle</button>
+
+    <div class="action-row">
+      <button class="action-btn" id="wifiToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8.5a16 16 0 0 1 20 0"/><path d="M5.5 12.5a11 11 0 0 1 13 0"/><path d="M9 16.3a5.5 5.5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor" stroke="none"/></svg>
+        Wifi
+      </button>
+      <a class="action-btn" href="https://wa.me/905383156107" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l1.4-4.2A8 8 0 1 1 9 19L4 20z"/></svg>
+        WhatsApp
+      </a>
+      <a class="action-btn" href="https://www.instagram.com/thelondoncafegarden/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.2"/><circle cx="16.6" cy="7.4" r="0.6" fill="currentColor" stroke="none"/></svg>
+        Instagram
+      </a>
+      <a class="action-btn" href="https://search.google.com/local/writereview?placeid=ChIJjW1ECwCj3BQRpzalS4M7mtU" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.4-7-11a7 7 0 0 1 14 0c0 4.6-7 11-7 11z"/><path d="M9.5 10.2l1.6 1.6 3.4-3.6"/></svg>
+        Değerlendir
+      </a>
+    </div>
+
+    <div class="wifi-pop" id="wifiPop">
+      <div class="label">Wifi Şifresi</div>
+      <div class="value" id="wifiValue">london123</div>
+    </div>
+  </div>
+</div>
+
+<div id="menuView">
+  <header class="mheader">
+    <div class="mtop">
+      <button class="back-btn" id="menuBackBtn">‹ Geri</button>
+      <h2 id="menuHeaderTitle">Kategoriler</h2>
+      <button class="theme-btn" id="themeToggleBtn" title="Mod Değiştir">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+  
+  <main class="mmain">
+    <div id="categoriesScreen" class="categories-grid"></div>
+
+    <div id="itemsScreen" class="hidden-view">
+      <div class="divider">
+        <div id="catOrderNum" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--brand-red);letter-spacing:1px;font-weight:600;">00</div>
+        <h3 class="cat-title" id="selectedCatTitle">Kategori Başlığı</h3>
+        <div class="rule"></div>
+      </div>
+      <div id="productsList"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ================= MENU DATA ================= */
+const MENU = [
+  { id:"kahvalti", title:"Kahvaltılar", items:[
+    {n:"İngiliz Kahvaltısı", p:"₺500", d:"Tavuk sosis, dana bacon, yumurta, mantar, patates ve domates soslu fasulye", k:"980 kcal", a:["Gluten","Yumurta"]},
+    {n:"Menemen", p:"₺240", d:"Domates, biber, yumurta, soğan, sarımsak", k:"280 kcal", a:["Yumurta"]},
+    {n:"Sucuklu Yumurta", p:"₺300", d:"Yumurta, sucuk, tereyağı, yeşillik, ekmek", k:"510 kcal", a:["Yumurta"]},
+    {n:"Kavurmalı Yumurta", p:"₺420", d:"Ağır ateşte pişirilmiş dana eti, karamelize soğan, tereyağı, ekmek", k:"490 kcal", a:["Yumurta"]},
+    {n:"Kaşarlı Tost", p:"₺235", d:"Ekmek, peynir, patates kızartması, sos, domates", k:"520 kcal", a:["Gluten","Süt"]},
+    {n:"Karışık Tost", p:"₺265", d:"Kaşar, sucuk, salam, domates, tereyağı, patates kızartması", k:"610 kcal", a:["Gluten","Süt"]},
+    {n:"Akdeniz Tostu", p:"₺230", d:"Kaşar, beyaz peynir, zeytin ezmesi, domates, biber, roka", k:"580 kcal", a:["Gluten","Yumurta","Süt"]},
+    {n:"Sahanda Yumurta", p:"₺200", d:"3 yumurta, tereyağı", k:"340 kcal", a:["Yumurta"]},
+    {n:"Müsli, Chia ve Mango ile Yoğurt", p:"₺260", d:"Yunan yoğurdu, müsli, chia tohumu, mango püresi, bal, taze meyveler", k:"340 kcal", a:["Süt","Sert kabuklu"]},
+    {n:"Kahvaltı Tabağı", p:"₺390", d:"Salatalık, domates, peynir, zeytin, ekmek, tereyağı, sucuk, 2 yumurta", k:"816 kcal", a:["Gluten","Yumurta","Süt"]},
+    {n:"Serpme Kahvaltı (2 kişilik)", p:"₺950", d:"Yumurta, bal, reçel, salatalık, domates, tereyağı, peynir, ekmek, sucuk, zeytin", k:"3770 kcal", a:["Gluten","Yumurta","Süt","Sert kabuklu"]}
+  ]},
+  { id:"baslangic", title:"Başlangıçlar", items:[
+    {n:"Somon ve Enginarlı Bruschetta", p:"₺390", d:"Çıtır ekmek üzerinde hafif tuzlanmış somon, enginar, krem peynir", k:"720 kcal", a:["Yumurta","Balık"]},
+    {n:"Burrata ve Domatesli Bruschetta", p:"₺1.020", d:"Burrata peyniri, taze domates, fesleğen", k:"730 kcal", a:["Gluten","Süt"]},
+    {n:"Karakılçık Cipsli Dana Tartar", p:"₺660", d:"Baharatlı dana tartar, çıtır karabuğday cipsleriyle", k:"260 kcal", a:["Gluten"]},
+    {n:"Trüflü Aioli Soslu Dana Carpaccio", p:"₺820", d:"Bonfile, marine soğan, zeytinyağı, parmesan, roka, trüf yağı", k:"680 kcal", a:["Süt","Susam"]},
+    {n:"Wasabi Soslu Karides", p:"₺700", d:"Wasabi, karides", k:"380 kcal", a:["Balık"]},
+    {n:"Peynir Tabağı", p:"₺660", d:"Ceviz, bal, beyaz peynir, tulum peyniri, üzüm", k:"620 kcal", a:["Süt","Sert kabuklu"]}
+  ]},
+  { id:"salata", title:"Salatalar", items:[
+    {n:"Karides ve Mangolu Yeşil Salata", p:"₺600", d:"Jumbo karides, salata mixi, taze mango, balzamik sos", k:"490 kcal", a:["Gluten","Balık"]},
+    {n:"Izgara Tavuklu Yeşil Salata", p:"₺510", d:"Tavuk fileto, salata mixi, mevsim sebzeleri, lime-chili sos", k:"417 kcal"},
+    {n:"Yunan Salatası", p:"₺340", d:"Domates, salatalık, biber, zeytin, feta peyniri", k:"237 kcal", a:["Süt"]},
+    {n:"Tavuklu Sezar Salata", p:"₺510", k:"617 kcal", a:["Yumurta","Süt"]},
+    {n:"Nar Taneli Tabbule Salatası", p:"₺300", k:"380 kcal", a:["Gluten"]}
+  ]},
+  { id:"corba", title:"Çorbalar", items:[
+    {n:"Karidesli Balkabağı Çorbası", p:"₺390", d:"Balkabağı, rezene, ekşi krema, karides, kabak çekirdeği", k:"380 kcal", a:["Süt","Balık"]},
+    {n:"Kapuçino Krem Çorba", p:"₺385", d:"Kültür mantarı, soğan, krema, kruton", k:"520 kcal", a:["Gluten","Süt"]},
+    {n:"Kuzulu Gulaş Çorbası", p:"₺420", d:"Kuzu eti, patates, havuç, nohut, domates", k:"320 kcal", a:["Gluten","Yumurta"]},
+    {n:"Deniz Ürünlü Tom Yum Çorbası", p:"₺540", d:"Somon, karides, kalamar, tom yum pastası, hindistan cevizi sütü", k:"520 kcal", a:["Gluten","Süt","Balık"]}
+  ]},
+  { id:"ana", title:"Ana Yemekler", items:[
+    {n:"İzgara Köfte", p:"₺670", d:"Kuzu-dana kıyma, pirinç, patates kızartması, ızgara biber", k:"650 kcal", a:["Gluten"]},
+    {n:"Et Fajita", p:"₺690", d:"Dana eti, dolmalık biber, fasulye, mısır, pita ekmeği", k:"780 kcal", a:["Gluten","Soya"]},
+    {n:"Tavuk Fajita", p:"₺410", d:"Tavuk eti, dolmalık biber, fasulye, mısır, pita ekmeği", k:"640 kcal", a:["Gluten"]},
+    {n:"Köri Soslu Tavuk", p:"₺470", d:"Tavuk göğsü, cherry domates, köri ezmesi, pirinç", k:"620 kcal", a:["Gluten","Süt"]},
+    {n:"Bebek Patates ve Ispanakla Bonfile", p:"₺1.100", d:"Bonfile, baby patates, krema, marine soğan, parmesan", k:"580 kcal", a:["Gluten","Süt"]},
+    {n:"Hollandez Soslu Izgara Levrek", p:"₺720", d:"Izgara levrek fileto, taze fasulye, klasik Hollandez sos", k:"720 kcal", a:["Yumurta","Süt","Balık"]},
+    {n:"Fish & Chips", p:"₺580", d:"Battered fish fillet, French fries, tartar sauce", k:"780 kcal", a:["Gluten","Balık"]},
+    {n:"Kırgız Mantısı", p:"₺700", d:"Kırgız usülü etli mantı", a:["Gluten"]}
+  ]},
+  { id:"izgara", title:"Izgaralar", items:[
+    {n:"Ribeye Steak", p:"₺1.450", d:"Izgarada pişirilmiş ribeye biftek, deniz tuzu ile", k:"1220 kcal"},
+    {n:"Kızılcıklı Soslu Dana Eti", p:"₺1.400", d:"Kısık ateşte pişirilmiş dana eti, yaban mersini sosu, parmesan", k:"458 kcal", a:["Süt"]},
+    {n:"T-Bone Biftek", p:"₺1.500", d:"Kontrfile ve bonfileyi bir arada sunar", k:"1240 kcal"},
+    {n:"Kuzu Pirzola", p:"₺850", d:"Aromatik baharatlarla marine edilir", k:"760 kcal"},
+    {n:"Chimichurri Soslu Karides", p:"₺1.100", d:"Jumbo karides, limon, chimichurri sos", k:"320 kcal", a:["Balık"]}
+  ]},
+  { id:"makarna", title:"Makarnalar", items:[
+    {n:"Spagetti Bolonez", p:"₺480", d:"Dana kıyma, havuç, kereviz, domates salçası, parmesan", k:"670 kcal", a:["Gluten","Süt"]},
+    {n:"Arabiata Soslu Makarna", p:"₺400", d:"Penne, domates, fesleğen, parmesan", k:"420 kcal", a:["Gluten","Süt"]},
+    {n:"Tavuklu Mantarlı Penne Makarna", p:"₺460", d:"Tavuk göğsü, kültür mantarı, krema, kekik", k:"850 kcal", a:["Gluten","Süt"]},
+    {n:"Fettuccine Alfredo", p:"₺480", d:"Tavuk göğsü, kültür mantarı, krema, ıspanak, parmesan", k:"720 kcal", a:["Gluten","Süt"]}
+  ]},
+  { id:"pizzaburger", title:"Pizza · Burger", items:[
+    {n:"Şefin Burgeri", p:"₺600", d:"Dana köftesi, mortadella, cheddar, barbekü sosu, yumurta", k:"1230 kcal", a:["Gluten","Yumurta","Süt","Hardal"]},
+    {n:"Dana Burger", p:"₺580", d:"Dana köftesi, cheddar, domates, turşu, burger sosu", k:"1150 kcal", a:["Gluten","Süt","Hardal"]},
+    {n:"Tavuk Burger", p:"₺530", d:"Pane tavuk köftesi, sezar sos, poşe yumurta, avokado", k:"1080 kcal", a:["Gluten","Yumurta","Süt"]},
+    {n:"Margherita Pizza", p:"₺580", d:"Domates sosu, domates, mozzarella, fesleğen", k:"890 kcal", a:["Gluten","Süt"]},
+    {n:"Trüf Yağlı Dört Peynirli Pizza", p:"₺780", d:"Mozzarella, cheddar, Dor Blue, parmesan, trüf yağı", k:"980 kcal", a:["Gluten","Süt","Susam"]},
+    {n:"Pepperoni Pizza", p:"₺700", d:"Domates sosu, mozzarella, parmesan, sosisler", k:"1020 kcal", a:["Gluten","Süt"]}
+  ]},
+  { id:"garnitur", title:"Garnitürler", items:[
+    {n:"Tartar Soslu Tempura Karnabahar", p:"₺220", k:"420 kcal", a:["Gluten","Yumurta","Süt"]},
+    {n:"Kekikli Brokoli", p:"₺200", k:"45 kcal"},
+    {n:"Trüflü Aioli ve Parmesanlı Patates Kızartması", p:"₺350", k:"640 kcal", a:["Süt"]},
+    {n:"Ispanaklı Pilav", p:"₺230", k:"380 kcal", a:["Süt"]}
+  ]},
+  { id:"tatli", title:"Tatlılar ve Meyveler", items:[
+    {n:"Meyve Tabağı", p:"₺650"},
+    {n:"Sütlaç", p:"₺300"},
+    {n:"Tiramisu", p:"₺320", k:"380 kcal"},
+    {n:"Medovik", p:"₺320", k:"380 kcal"},
+    {n:"San Sebastian", p:"₺300", k:"419 kcal"},
+    {n:"Cream Brûlée Limonlu", p:"₺280", k:"221 kcal"}
+  ]},
+  { id:"soft", title:"Soft İçecekler", items:[
+    {n:"Coca Cola", p:"₺120"}, {n:"Cola Zero", p:"₺120"}, {n:"Fanta", p:"₺120"}, {n:"Sprite", p:"₺120"},
+    {n:"Ice Tea Limon", p:"₺110"}, {n:"Ice Tea Şeftali", p:"₺110"}, {n:"Maden Suyu", p:"₺80"},
+    {n:"Ayran", p:"₺90"}, {n:"Şalgam", p:"₺100"}, {n:"Su", p:"₺60"}, {n:"Büyük Su", p:"₺100"}
+  ]},
+  { id:"sicak", title:"Sıcak İçecekler", items:[
+    {n:"Çay", p:"₺50"}, {n:"Ada Çayı", p:"₺130"}, {n:"English Breakfast Çayı", p:"₺145"},
+    {n:"Yeşil Çay", p:"₺145"}, {n:"Salep", p:"₺190", k:"180 kcal"}, {n:"Sıcak Çikolata", p:"₺190", k:"190 kcal"}
+  ]},
+  { id:"kahve", title:"Kahveler", items:[
+    {n:"Americano", p:"₺150", k:"15 kcal"}, {n:"Café Latte", p:"₺180", k:"120 kcal", a:["Süt"]},
+    {n:"Cappuccino", p:"₺180", k:"130 kcal", a:["Süt"]}, {n:"Café Mocha", p:"₺210", k:"250 kcal", a:["Süt"]},
+    {n:"Karamel Macchiato", p:"₺200", k:"200 kcal", a:["Süt"]}, {n:"Tek Türk Kahvesi", p:"₺110", k:"5 kcal"},
+    {n:"Filtre Kahve", p:"₺150", k:"2 kcal"}, {n:"Flat White", p:"₺170", k:"120 kcal", a:["Süt"]}
+  ]},
+  { id:"soguk-kahve", title:"Soğuk Kahveler", items:[
+    {n:"Vanilya Ice Latte", p:"₺210", k:"220 kcal", a:["Süt"]}, {n:"Ice Americano", p:"₺150", k:"15 kcal"},
+    {n:"Ice Latte", p:"₺180", k:"150 kcal", a:["Süt"]}, {n:"Ice Mocha", p:"₺200", k:"350 kcal", a:["Süt"]},
+    {n:"Affogato", p:"₺210", k:"185 kcal", a:["Süt"]}, {n:"Espresso Tonic", p:"₺230", k:"90 kcal"}
+  ]},
+  { id:"milkshake", title:"Milkshake · Frozen", items:[
+    {n:"Çikolatalı Milkshake", p:"₺265", k:"235 kcal", a:["Süt"]}, {n:"Çilekli Milkshake", p:"₺265", k:"235 kcal", a:["Süt"]},
+    {n:"Mango Frozen", p:"₺280"}, {n:"Berry Smoothie", p:"₺420", k:"250 kcal"}
+  ]},
+  { id:"kokteyl", title:"Kokteyller", items:[
+    {n:"Alkolsüz Mojito", p:"₺300", k:"85 kcal"}, {n:"Limonata", p:"₺300", k:"145 kcal"},
+    {n:"Mojito", p:"₺540", k:"190 kcal"}, {n:"Aperol Spritz", p:"₺480", k:"185 kcal"},
+    {n:"Espresso Martini", p:"₺420", k:"210 kcal"}, {n:"Pina Colada", p:"₺540", k:"330 kcal"}
+  ]},
+  { id:"bira", title:"Biralar", items:[
+    {n:"Efes 50 cl", p:"₺210"}, {n:"Tuborg 50 cl", p:"₺230"}, {n:"Carlsberg 50 cl", p:"₺230"},
+    {n:"Guinness 50 cl", p:"₺380"}, {n:"Corona 33 cl", p:"₺360"}
+  ]},
+  { id:"sarap", title:"Şarap ve Şampanyalar", items:[
+    {n:"Kadeh Şarap (Kırmızı / Roze / Beyaz)", p:"₺350"},
+    {n:"Sultaniye (Yarı Tatlı — Kavaklıdere)", p:"₺2.050"},
+    {n:"Suvla (Chardonnay — Gelibolu)", p:"₺2.000"},
+    {n:"ROI DE PARIS Şampanya", p:"₺850"}
+  ]},
+  { id:"sushi", title:"Sushi Roll", items:[
+    {n:"California Roll", p:"₺449", d:"Suşi pirinci, nori, salatalık, mayonez, avokado, tobiko, wasabi", k:"320 kcal", a:["Süt","Balık"]},
+    {n:"Crispy Roll", p:"₺449", d:"Nori, salatalık, Philadelphia, avokado, yengeç çubuğu, baharat sosu", k:"381 kcal", a:["Süt","Balık"]},
+    {n:"Philadelphia Roll", p:"₺449", d:"Nori, salatalık, Philadelphia, avokado, somon, wasabi", k:"310 kcal", a:["Süt","Balık"]},
+    {n:"Mango Vegan Roll", p:"₺349", d:"Nori, salatalık, Philadelphia, avokado, mango, shiricha", k:"280 kcal", a:["Süt","Balık"]}
+  ]}
+];
+
+/* ================= RENDER MANTIĞI ================= */
+const categoriesScreen = document.getElementById('categoriesScreen');
+const itemsScreen = document.getElementById('itemsScreen');
+const productsList = document.getElementById('productsList');
+const menuHeaderTitle = document.getElementById('menuHeaderTitle');
+const menuBackBtn = document.getElementById('menuBackBtn');
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const themeIcon = document.getElementById('themeIcon');
+
+// Kategori Ekranını Çizme
+function initCategoriesScreen() {
+  categoriesScreen.innerHTML = '';
+  MENU.forEach((cat, i) => {
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    const orderStr = (i + 1).toString().padStart(2, '0');
+    
+    card.innerHTML = `
+      <div class="cat-num">${orderStr}</div>
+      <div class="cat-name">${cat.title}</div>
+    `;
+    
+    card.addEventListener('click', () => openCategoryItems(cat, orderStr));
+    categoriesScreen.appendChild(card);
+  });
+}
+
+// Kategorinin İçine Girip Ürünleri Listeleme
+function openCategoryItems(category, orderStr) {
+  menuHeaderTitle.textContent = category.title;
+  document.getElementById('catOrderNum').textContent = orderStr;
+  document.getElementById('selectedCatTitle').textContent = category.title;
+  
+  productsList.innerHTML = '';
+  category.items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'item';
+    const allergenHtml = (item.a || []).map(a => `<span class="allergen">${a}</span>`).join('');
+    const kcalHtml = item.k ? `<span class="kcal">${item.k}</span>` : '';
+    const descHtml = item.d ? `<p class="desc">${item.d}</p>` : '';
+    const metaHtml = (item.k || (item.a && item.a.length)) ? `<div class="meta">${kcalHtml}${allergenHtml}</div>` : '';
+    
+    el.innerHTML = `
+      <div class="thumb">${item.n.charAt(0)}</div>
+      <div class="item-body">
+        <div class="item-row">
+          <span class="item-name">${item.n}</span>
+          <span class="leader"></span>
+          <span class="price">${item.p}</span>
+        </div>
+        ${descHtml}
+        ${metaHtml}
+      </div>`;
+    productsList.appendChild(el);
+  });
+  
+  categoriesScreen.classList.add('hidden-view');
+  itemsScreen.classList.remove('hidden-view');
+  document.getElementById('menuView').scrollTo({ top: 0 });
+}
+
+// Üst Menüdeki Geri Butonu Kontrolü
+menuBackBtn.addEventListener('click', () => {
+  if (!itemsScreen.classList.contains('hidden-view')) {
+    itemsScreen.classList.add('hidden-view');
+    categoriesScreen.classList.remove('hidden-view');
+    menuHeaderTitle.textContent = "Kategoriler";
+    document.getElementById('menuView').scrollTo({ top: 0 });
+  } else {
+    document.getElementById('menuView').classList.remove('open');
+    document.getElementById('landing').classList.remove('hidden');
+  }
+});
+
+/* ================= GECE / GÜNDÜZ MODU KONTROLÜ ================= */
+themeToggleBtn.addEventListener('click', () => {
+  const currentTheme = document.body.getAttribute('data-theme');
+  
+  if (currentTheme === 'light') {
+    // Gece Moduna Geç (Güneş İkonu Koy)
+    document.body.setAttribute('data-theme', 'dark');
+    themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
+  } else {
+    // Gündüz Moduna Geç (Ay İkonu Koy)
+    document.body.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+  }
+});
+
+/* ================= ETKİLEŞİMLER ================= */
+document.getElementById('openMenu').addEventListener('click', () => {
+  initCategoriesScreen();
+  itemsScreen.classList.add('hidden-view');
+  categoriesScreen.classList.remove('hidden-view');
+  menuHeaderTitle.textContent = "Kategoriler";
+  
+  document.getElementById('menuView').classList.add('open');
+  document.getElementById('landing').classList.add('hidden');
+});
+
+document.getElementById('wifiToggle').addEventListener('click', () => {
+  document.getElementById('wifiPop').classList.toggle('open');
+});
+</script>
+
+</body>
+</html>

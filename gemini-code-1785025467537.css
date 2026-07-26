@@ -1,0 +1,124 @@
+/* Genel Sıfırlamalar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Tam Ekran Video Tasarımı */
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* İçeriklerin arkasında kalması için */
+}
+
+#bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Videonun ekranı tamamen kaplamasını sağlar */
+}
+
+/* Videonun üzerindeki karartma katmanı */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Videoyu %50 oranında karartır */
+}
+
+/* Ön Plandaki İçerik Alanı */
+.content-container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Logo Alanı ve Dönme Animasyonu */
+.logo-wrapper {
+    margin-bottom: 25px;
+}
+
+.rotating-logo {
+    width: 150px; /* Logonun ekrandaki genişliği */
+    height: 150px;
+    border-radius: 50%; /* Logonun yuvarlak kalmasını garantiler */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Logoya hafif bir gölge */
+    
+    /* Animasyon Tanımı: 15 saniyede bir tam tur döner, doğrusal hızda ve sonsuz tekrarlar */
+    animation: spinAround 15s linear infinite; 
+}
+
+/* CSS Dönme Efekti Ayarı */
+@keyframes spinAround {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Yazı ve Buton Şablonları (İsteğe Bağlı) */
+.cafe-title {
+    font-size: 24px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.cafe-subtitle {
+    font-size: 14px;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.menu-btn {
+    display: block;
+    padding: 12px 20px;
+    background-color: #8b1e1e; /* Logonun kırmızı tonuna yakın bir renk */
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.menu-btn:hover {
+    background-color: #a32424;
+}
+
+.wifi-btn {
+    background-color: #1e5c3a; /* Logonun yeşil tonuna yakın bir renk */
+}
+
+.wifi-btn:hover {
+    background-color: #27754a;
+}
